@@ -10,9 +10,10 @@ class DefaultWindow:
         self.window = curses.newwin(
             geometry.height, geometry.width, geometry.top, geometry.left
         )
-        if border:
-            self.draw_border()
+        self._border = border
+        self.draw_border()
         self.window.refresh()
 
     def draw_border(self):
-        self.window.border()
+        if self._border:
+            self.window.border()

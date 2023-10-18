@@ -2,6 +2,10 @@ import curses
 import os
 from pathlib import Path
 
+from .BottomInfoBar import BottomInfoBar
+
+from .TopInfoBar import TopInfoBar
+
 from .PreviewWindow import PreviewWindow
 
 from .Types import WindowGeometry
@@ -34,6 +38,7 @@ class MainScreen(DefaultWindow):
         self.initialize_preview_window(
             preview_width, prev_folder_width + main_folder_width
         )
+        self.initialize_info_bars()
         self.update_preview_window()
 
     def initialize_main_window(self, width, left):
@@ -56,11 +61,21 @@ class MainScreen(DefaultWindow):
         )
         self.preview_window = PreviewWindow(preview_window_geometry)
 
+    def initialize_info_bars(self):
+        top_info_bar_geometry = WindowGeometry(1, self.geometry.width, 0, 0)
+        self.top_info_bar = TopInfoBar(top_info_bar_geometry)
+        bottom_info_bar_geometry = WindowGeometry(
+            1, self.geometry.width, self.geometry.height - 1, 0
+        )
+        self.bottom_info_bar = BottomInfoBar(bottom_info_bar_geometry)
+        self.top_info_bar.update_path(self.path)
+
     def update_preview_window(self):
         self.selected_entry = self.main_folder_window.entries[
             self.main_folder_window.selected_entry_index
         ]
         self.preview_window.update(self.selected_entry)
+        self.bottom_info_bar.update_entry_info(self.selected_entry)
 
     def go_to_path(self, new_path: Path):
         try:
@@ -69,6 +84,7 @@ class MainScreen(DefaultWindow):
             self.update_preview_window()
             self.path = new_path
             self.prev_folder = new_path.parent.absolute()
+            self.top_info_bar.update_path(self.path)
         except:
             self.main_folder_window.update_path(self.path)
             self.prev_folder_window.update_path(self.prev_folder)

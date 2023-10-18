@@ -19,6 +19,8 @@ class Entry:
         self.type = EntryType.TEXT
         if path.is_dir():
             self.type = EntryType.FOLDER
+        elif os.access(path, os.X_OK):
+            self.type = EntryType.EXECUTABLE
         try:
             self.size = os.path.getsize(path)
         except os.error:

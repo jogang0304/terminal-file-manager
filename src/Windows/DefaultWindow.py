@@ -1,7 +1,6 @@
 import curses
-from time import sleep
 
-from .Types import WindowGeometry
+from ..Types import WindowGeometry
 
 
 class DefaultWindow:

@@ -1,14 +1,11 @@
-from optparse import Option
 from pathlib import Path
 from typing import List, Optional
 import curses
 
-from .Types import WindowGeometry
+from ..Types import WindowGeometry
 
-from .Entry import Entry
+from ..Entry import Entry
 from .DefaultWindow import DefaultWindow
-import os
-
 
 class FolderWindow(DefaultWindow):
     def __init__(self, geometry: WindowGeometry, path: Path = Path("/")):

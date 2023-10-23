@@ -2,18 +2,17 @@ import curses
 import os
 from pathlib import Path
 
-from .BottomInfoBar import BottomInfoBar
+from .FilesActions.Processor import FilesProcessor
+from .InfoBars.BottomInfoBar import BottomInfoBar
+from .InfoBars.TopInfoBar import TopInfoBar
+from .Windows.FolderWindow import FolderWindow
 
-from .TopInfoBar import TopInfoBar
+from .Windows.MainFolderWindow import MainFolderWindow
+from .Windows.PreviewWindow import PreviewWindow
 
-from .PreviewWindow import PreviewWindow
+from .Windows.DefaultWindow import DefaultWindow
 
 from .Types import WindowGeometry
-
-from .MainFolderWindow import MainFolderWindow
-
-from .FolderWindow import FolderWindow
-from .DefaultWindow import DefaultWindow
 
 
 class MainScreen(DefaultWindow):
@@ -39,6 +38,7 @@ class MainScreen(DefaultWindow):
             preview_width, prev_folder_width + main_folder_width
         )
         self.initialize_info_bars()
+        self.files_processor = FilesProcessor()
         self.update_preview_window()
 
     def initialize_main_window(self, width, left):
@@ -76,6 +76,13 @@ class MainScreen(DefaultWindow):
         ]
         self.preview_window.update(self.selected_entry)
         self.bottom_info_bar.update_entry_info(self.selected_entry)
+        self.bottom_info_bar.update_output(self.files_processor.message)
+    
+    def update(self):
+        self.main_folder_window.update_path(self.path)
+        self.prev_folder_window.update_path(self.path.parent.absolute())
+        self.update_preview_window()
+        
 
     def go_to_path(self, new_path: Path):
         try:
@@ -105,3 +112,15 @@ class MainScreen(DefaultWindow):
     def select_up(self):
         self.main_folder_window.select_up()
         self.update_preview_window()
+
+    def copy(self):
+        self.files_processor.copy(self.selected_entry)
+        self.update()
+    
+    def paste(self):
+        self.files_processor.paste(self.path)
+        self.update()
+        
+    def undo(self):
+        self.files_processor.undo()
+        self.update()

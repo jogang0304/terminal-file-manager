@@ -1,9 +1,8 @@
-from pathlib import Path
 from typing import Optional
 
-from .Entry import Entry, EntryType
+from ..Entry import Entry, EntryType
 
-from .Types import WindowGeometry
+from ..Types import WindowGeometry
 
 from .DefaultWindow import DefaultWindow
 

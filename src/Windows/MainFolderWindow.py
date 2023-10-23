@@ -1,8 +1,7 @@
 from pathlib import Path
 
-from .Types import WindowGeometry
+from ..Types import WindowGeometry
 from .FolderWindow import FolderWindow
-import curses
 
 
 class MainFolderWindow(FolderWindow):

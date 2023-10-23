@@ -27,11 +27,17 @@ def main(stdscr):
         key = stdscr.getkey()
         if key == "q":
             break
-        elif key == "KEY_LEFT":
+        elif key == "KEY_LEFT" or key == "h":
             main_screen.go_to_prev_folder()
-        elif key == "KEY_DOWN":
+        elif key == "KEY_DOWN" or key == "j":
             main_screen.select_down()
-        elif key == "KEY_UP":
+        elif key == "KEY_UP" or key == "k":
             main_screen.select_up()
-        elif key == "KEY_RIGHT":
+        elif key == "KEY_RIGHT" or key == "l":
             main_screen.go_to_selected_folder()
+        elif key == "y":
+            main_screen.copy()
+        elif key == "p":
+            main_screen.paste()
+        elif key == "u":
+            main_screen.undo()

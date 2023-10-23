@@ -1,7 +1,6 @@
 from .InfoBar import InfoBar
-from .Entry import Entry
-from .Types import WindowGeometry
-from .DefaultWindow import DefaultWindow
+from ..Entry import Entry
+from ..Types import WindowGeometry
 import os
 
 
@@ -18,9 +17,10 @@ class BottomInfoBar(InfoBar):
         if os.access(entry.path, os.X_OK):
             left_part += "X"
         right_part = f"Size: {entry.size} bytes"
-        self.info = (
-            left_part
-            + " " * (self.geometry.width - 1 - len(left_part) - len(right_part))
-            + right_part
-        )
+        self.left_info = left_part
+        self.right_info = right_part
+        self._update_info()
+
+    def update_output(self, text: str):
+        self.mid_info = text
         self._update_info()

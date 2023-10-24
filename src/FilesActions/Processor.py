@@ -34,14 +34,13 @@ class Action:
     def undo(self) -> str:
         if self.type == ActionType.PASTE and self.source and self.destination:
             try:
-                if self.destination.is_dir():
-                    if not self.source.exists():
+                if not self.source.exists():
+                    if self.destination.is_dir():
                         shutil.copytree(self.destination, self.source)
-                    shutil.rmtree(self.destination)
-                else:
-                    if not self.source.exists():
+                    else:
                         shutil.copy2(self.destination, self.source)
-                    send2trash(self.destination)
+
+                send2trash(self.destination)
                 return f"Removed {self.destination}"
             except:
                 return f"Error: can't remove {self.destination}"

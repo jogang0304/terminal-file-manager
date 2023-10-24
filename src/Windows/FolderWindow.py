@@ -7,6 +7,7 @@ from ..Types import WindowGeometry
 from ..Entry import Entry
 from .DefaultWindow import DefaultWindow
 
+
 class FolderWindow(DefaultWindow):
     def __init__(self, geometry: WindowGeometry, path: Path = Path("/")):
         super().__init__(geometry)
@@ -52,7 +53,6 @@ class FolderWindow(DefaultWindow):
 
     def _update_window(self):
         self.window.clear()
-        self.draw_border()
         if len(self.entries) > 0:
             for i in range(self.top_entry_index, self.bottom_entry_index + 1):
                 self._display_entry_by_index(i)
@@ -63,4 +63,5 @@ class FolderWindow(DefaultWindow):
                 self.error if self.error else "empty folder",
                 curses.color_pair(101),
             )
+        self.draw_border()
         self.window.refresh()

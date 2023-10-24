@@ -1,5 +1,7 @@
 from typing import Optional
 
+from .FileWindow import FileWindow
+
 from ..Entry import Entry, EntryType
 
 from ..Types import WindowGeometry
@@ -21,4 +23,4 @@ class PreviewWindow(DefaultWindow):
         if entry.type == EntryType.FOLDER:
             self.content = FolderWindow(self.geometry, entry.path)
         else:
-            self.content = DefaultWindow(self.geometry)
+            self.content = FileWindow(self.geometry, entry)

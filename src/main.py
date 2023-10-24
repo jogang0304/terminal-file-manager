@@ -37,7 +37,11 @@ def main(stdscr):
             main_screen.go_to_selected_folder()
         elif key == "y":
             main_screen.copy()
+        elif key == "c":
+            main_screen.cut()
         elif key == "p":
             main_screen.paste()
         elif key == "u":
             main_screen.undo()
+        elif key == "d":
+            main_screen.delete()

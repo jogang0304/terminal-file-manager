@@ -77,12 +77,11 @@ class MainScreen(DefaultWindow):
         self.preview_window.update(self.selected_entry)
         self.bottom_info_bar.update_entry_info(self.selected_entry)
         self.bottom_info_bar.update_output(self.files_processor.message)
-    
+
     def update(self):
         self.main_folder_window.update_path(self.path)
         self.prev_folder_window.update_path(self.path.parent.absolute())
         self.update_preview_window()
-        
 
     def go_to_path(self, new_path: Path):
         try:
@@ -117,10 +116,18 @@ class MainScreen(DefaultWindow):
         self.files_processor.copy(self.selected_entry)
         self.update()
     
+    def cut(self):
+        self.files_processor.cut(self.selected_entry)
+        self.update()
+
     def paste(self):
         self.files_processor.paste(self.path)
         self.update()
-        
+
+    def delete(self):
+        self.files_processor.delete(self.selected_entry)
+        self.update()
+
     def undo(self):
         self.files_processor.undo()
         self.update()

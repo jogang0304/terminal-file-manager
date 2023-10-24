@@ -11,9 +11,18 @@ class EntryType(IntEnum):
     OTHER = 5
 
 
-# size в байтах
+# The `Entry` class initializes an object with properties such as path, name, type, and size based on the given path.
 class Entry:
     def __init__(self, path: Path) -> None:
+        """The function initializes an object with properties such as path, name, type, and size based on
+        the given path.
+
+        Parameters
+        ----------
+        path : Path
+            The `path` parameter is a `Path` object that represents the file or directory path. It is used to initialize the `path` attribute of the class instance.
+
+        """
         self.path = path
         self.name = path.name
         self.type = EntryType.TEXT

@@ -6,6 +6,9 @@ from .MainScreen import MainScreen
 
 
 def initialize_colors():
+    """
+    The function initializes color pairs for different types of entries in a terminal interface.
+    """
     curses.start_color()
     curses.init_pair(100, curses.COLOR_BLACK, curses.COLOR_WHITE)
     curses.init_pair(EntryType.EXECUTABLE, curses.COLOR_GREEN, curses.COLOR_BLACK)
@@ -17,6 +20,14 @@ def initialize_colors():
 
 
 def main(stdscr):
+    """The above function is the main function of a Python program that creates a text-based file manager interface and handles user input to navigate folders, select files, and perform various file operations.
+
+    Parameters
+    ----------
+    stdscr
+        The `stdscr` parameter is a reference to the standard screen object in the curses library. It represents the main window that is displayed on the terminal.
+
+    """
     stdscr.clear()
     initialize_colors()
     curses.curs_set(False)

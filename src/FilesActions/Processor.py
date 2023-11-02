@@ -60,6 +60,19 @@ class FilesProcessor:
         self.pending_action = None
         self.pending_file: Optional[Entry] = None
 
+    @staticmethod
+    def _get_pending_file_destination(path: Path, name: str):
+        filename_suffix = 0
+        pending_file_destination = path.joinpath(
+            name + (f"({filename_suffix})" if filename_suffix else "")
+        )
+        while pending_file_destination.exists():
+            filename_suffix += 1
+            pending_file_destination = path.joinpath(
+                name + (f"({filename_suffix})" if filename_suffix else "")
+            )
+        return pending_file_destination
+
     def copy(self, file: Entry):
         self.pending_action = ActionType.COPY
         self.pending_file = file
@@ -73,13 +86,21 @@ class FilesProcessor:
     def paste(self, path: Path):
         if not path.is_dir or not self.pending_file:
             return
-        if self.pending_action in (ActionType.COPY, ActionType.CUT):
+        if (
+            self.pending_action in (ActionType.COPY, ActionType.CUT)
+            and self.pending_file.path.exists()
+        ):
+            pending_file_destination = self._get_pending_file_destination(
+                path, self.pending_file.name
+            )
             if self.pending_file.path.is_dir():
                 destination = shutil.copytree(
-                    self.pending_file.path, path.joinpath(self.pending_file.name)
+                    self.pending_file.path, pending_file_destination
                 )
             else:
-                destination = shutil.copy2(self.pending_file.path, path)
+                destination = shutil.copy2(
+                    self.pending_file.path, pending_file_destination
+                )
             if self.pending_action == ActionType.CUT:
                 send2trash(self.pending_file.path)
             self.actions.append(

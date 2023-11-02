@@ -9,7 +9,7 @@ class InfoBar(DefaultWindow):
         super().__init__(geometry, border)
         self.left_info = ""
         self.right_info = ""
-        self.mid_info = "aboba"
+        self.mid_info = ""
 
     def _update_info(self, color: int = EntryType.OTHER):
         self.window.clear()

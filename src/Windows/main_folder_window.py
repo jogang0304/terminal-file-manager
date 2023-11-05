@@ -1,16 +1,22 @@
+"""
+The `MainFolderWindow` class is a subclass of `FolderWindow`. It is a central window,
+with which user interacts.
+"""
 from pathlib import Path
 
-from ..Types import WindowGeometry
-from .FolderWindow import FolderWindow
+from src.custom_types import WindowGeometry
+from src.Windows.folder_window import FolderWindow
 
 
 class MainFolderWindow(FolderWindow):
+    """
+    The `MainFolderWindow` class is a subclass of `FolderWindow`. It is a central window,
+    with which user interacts.
+    """
+
     def __init__(self, geometry: WindowGeometry, path: Path = Path("/")):
         self.selected_entry_index = 0
         super().__init__(geometry, path)
-
-    def update_path(self, path: Path):
-        super().update_path(path)
 
     def _update_window(self):
         super()._update_window()
@@ -22,6 +28,8 @@ class MainFolderWindow(FolderWindow):
             self.window.refresh()
 
     def select_down(self):
+        """The function selects the next entry in a list and updates the
+        window display accordingly."""
         self.selected_entry_index = min(
             self.selected_entry_index + 1, len(self.entries) - 1
         )
@@ -31,6 +39,8 @@ class MainFolderWindow(FolderWindow):
         self._update_window()
 
     def select_up(self):
+        """The function selects the previous entry in a list and updates
+        the window display accordingly."""
         self.selected_entry_index = max(self.selected_entry_index - 1, 0)
         if self.selected_entry_index < self.top_entry_index:
             self.top_entry_index -= 1

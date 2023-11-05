@@ -1,7 +1,7 @@
 from platform import processor
 import unittest
-from src.Entry import Entry
-from src.FilesActions.Processor import FilesProcessor
+from src.entry import Entry
+from src.FilesActions.file_processor import FilesProcessor
 import os
 import shutil
 from pathlib import Path

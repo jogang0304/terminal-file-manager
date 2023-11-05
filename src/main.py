@@ -1,8 +1,11 @@
+"""
+The main function creates a text-based file manager interface and handles user input to navigate
+folders, select files, and perform various file operations.s
+"""
 import curses
-from typing import Type
 
-from .Entry import EntryType
-from .MainScreen import MainScreen
+from .entry import EntryType
+from .main_screen import MainScreen
 
 
 def initialize_colors():
@@ -20,12 +23,15 @@ def initialize_colors():
 
 
 def main(stdscr):
-    """The above function is the main function of a Python program that creates a text-based file manager interface and handles user input to navigate folders, select files, and perform various file operations.
+    """The above function is the main function of a Python program that creates a
+    text-based file manager interface and handles user input to navigate folders
+    select files, and perform various file operations.
 
     Parameters
     ----------
     stdscr
-        The `stdscr` parameter is a reference to the standard screen object in the curses library. It represents the main window that is displayed on the terminal.
+        The `stdscr` parameter is a reference to the standard screen object in
+        the curses library. It represents the main window that is displayed on the terminal.
 
     """
     stdscr.clear()
@@ -38,13 +44,13 @@ def main(stdscr):
         key = stdscr.getkey()
         if key == "q":
             break
-        elif key == "KEY_LEFT" or key == "h":
+        if key in ("KEY_LEFT", "h"):
             main_screen.go_to_prev_folder()
-        elif key == "KEY_DOWN" or key == "j":
+        elif key in ("KEY_DOWN", "j"):
             main_screen.select_down()
-        elif key == "KEY_UP" or key == "k":
+        elif key in ("KEY_UP", "k"):
             main_screen.select_up()
-        elif key == "KEY_RIGHT" or key == "l":
+        elif key in ("KEY_RIGHT", "l"):
             main_screen.go_to_selected_folder()
         elif key == "y":
             main_screen.copy()

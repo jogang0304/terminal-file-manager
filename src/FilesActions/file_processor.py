@@ -1,5 +1,8 @@
+"""
+The `FilesProcessor` class handles file operations such as copying, pasting, deleting, 
+cutting, creating, and undoing actions.
+"""
 from enum import IntEnum
-from optparse import Option
 import os
 import platform
 import shutil
@@ -8,10 +11,12 @@ import subprocess
 from typing import List, Optional
 from send2trash import send2trash
 
-from ..Entry import Entry, EntryType
+from src.entry import Entry, EntryType
 
 
 class ActionType(IntEnum):
+    """The ActionType class defines an enumeration of different types of actions."""
+
     COPY = 1
     PASTE = 2
     DELETE = 3
@@ -35,13 +40,16 @@ class Action:
         self.destination: Optional[Path] = destination
 
     def undo(self) -> str:
-        """The `undo` function checks the type of action performed and undoes it by either copying the destination to the source and deleting the destination, or by deleting the source.
+        """The `undo` function is used to reverse certain actions such as pasting,
+        deleting, or creating files/directories, and returns a message indicating
+        the result of the undo operation.
 
         Returns
         -------
-            The return value depends on the conditions in the code. If the `type` is `ActionType.PASTE` and both `source` and `destination` are provided, it will try to remove the `destination` file or directory and return a string indicating success or failure. If the `type` is `ActionType.DELETE` and `source` is provided, it will do nothing.
+            The `undo` method returns a string, representing the success of the operation.
 
         """
+
         if self.type == ActionType.PASTE and self.source and self.destination:
             try:
                 if not self.source.exists():
@@ -85,12 +93,15 @@ class FilesProcessor:
 
     @staticmethod
     def _get_pending_file_destination(path: Path, name: str):
-        """The `_get_pending_file_destination` function returns a unique file destination path by appending a suffix to the given name if a file with the same name already exists in the given path.
+        """The `_get_pending_file_destination` function returns a unique file destination
+        path by appending a suffix to the given name if a file with the same name already
+        exists in the given path.
 
         Parameters
         ----------
         path : Path
-            The `path` parameter is a `Path` object representing the directory where the file will be saved.
+            The `path` parameter is a `Path` object representing the directory where
+            the file will be saved.
         name : str
             The `name` parameter is a string representing the desired name of the file.
 
@@ -137,12 +148,14 @@ class FilesProcessor:
         self.message = f"Copied {file.name} for cutting"
 
     def paste(self, path: Path):
-        """The `paste` function copies or moves a file or directory to a specified destination path and records the action in a list.
+        """The `paste` function copies or moves a file or directory to a specified
+        destination path and records the action in a list.
 
         Parameters
         ----------
         path : Path
-            The `path` parameter is of type `Path` and represents the destination directory where the file or folder will be pasted.
+            The `path` parameter is of type `Path` and represents the destination
+            directory where the file or folder will be pasted.
         """
         if not path.is_dir or not self.pending_file:
             return
@@ -172,13 +185,14 @@ class FilesProcessor:
             )
 
     def delete(self, file: Entry, trash_folder: Optional[Path] = None):
-        """The `delete` function deletes a file and updates the message and actions list accordingly.
+        """The `delete` function deletes a file and updates the message and
+        actions list accordingly.
 
         Parameters
         --------
         file : Entry
-            The `file` parameter is an instance of the `Entry` class. It represents a file or directory
-        that you want to delete.
+            The `file` parameter is an instance of the `Entry` class. It represents
+            a file or directory that you want to delete.
 
         """
         if not trash_folder:
@@ -190,14 +204,25 @@ class FilesProcessor:
             )
             if file.path.is_dir():
                 destination = shutil.copytree(file.path, pending_file_destination)
+                shutil.rmtree(file.path)
             else:
                 destination = shutil.copy2(file.path, pending_file_destination)
+                file.path.unlink()
             self.actions.append(Action(ActionType.DELETE, file.path, destination))
-            shutil.rmtree(file.path)
 
         self.message = f"Deleted {file.name}"
 
     def create(self, file: Entry):
+        """The function creates a file or folder based on the given Entry object and
+        adds an action to the actions list.
+
+        Parameters
+        ----------
+        file : Entry
+            The `file` parameter is an instance of the `Entry` class.
+            It represents a file or folder that needs to be created.
+
+        """
         if file.type == EntryType.FOLDER:
             file.path.mkdir()
         else:
@@ -205,8 +230,8 @@ class FilesProcessor:
         self.actions.append(Action(ActionType.CREATE, file.path))
 
     def undo(self):
-        """The `undo` function undoes the last action performed by removing it from the list of actions and
-        updating the message.
+        """The `undo` function undoes the last action performed by removing it
+        from the list of actions and updating the message.
 
         """
         if len(self.actions) > 0:
@@ -214,6 +239,20 @@ class FilesProcessor:
             self.actions.pop()
 
     def open(self, file: Entry):
+        """The function opens a file using the appropriate system command based on
+        the file's type and platform.
+
+        Parameters
+        ----------
+        file : Entry
+            The `file` parameter is an instance of the `Entry` class.
+            It represents a file or folder entry.
+
+        If the file type is a folder, nothing is done. Otherwise, if the file type is not a folder,
+        the function attempts to open the file using the appropriate method based on the operating
+        system.
+
+        """
         if file.type == EntryType.FOLDER:
             return
         try:

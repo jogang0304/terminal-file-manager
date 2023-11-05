@@ -1,10 +1,19 @@
-from ..Windows.DefaultWindow import DefaultWindow
-from ..Entry import EntryType
-from ..Types import WindowGeometry
+"""
+The InfoBar class is a subclass of DefaultWindow that displays information
+in a formatted manner with left, middle, and right sections.
+"""
 import curses
+from src.Windows.default_window import DefaultWindow
+from src.entry import EntryType
+from src.custom_types import WindowGeometry
 
 
 class InfoBar(DefaultWindow):
+    """
+    The InfoBar class is a subclass of DefaultWindow that displays information
+    in a formatted manner with left, middle, and right sections.
+    """
+
     def __init__(self, geometry: WindowGeometry, border: bool = False) -> None:
         super().__init__(geometry, border)
         self.left_info = ""

@@ -1,15 +1,39 @@
+"""
+The `FolderWindow` class represents a window that displays the contents
+of a folder and allows for navigation and interaction with the files and directories within it.
+"""
 from pathlib import Path
 from typing import List, Optional
 import curses
 
-from ..Types import WindowGeometry
+from src.custom_types import WindowGeometry
 
-from ..Entry import Entry
-from .DefaultWindow import DefaultWindow
+from src.entry import Entry
+from src.Windows.default_window import DefaultWindow
 
 
 class FolderWindow(DefaultWindow):
+    """
+    The `FolderWindow` class represents a window that displays the contents
+    of a folder and allows for navigation and updates based on the current path.
+    """
+
     def __init__(self, geometry: WindowGeometry, path: Path = Path("/")):
+        """
+        The function initializes an object with a given geometry and path,
+        and updates the entries and window.
+
+        Parameters
+        ----------
+        geometry : WindowGeometry
+            The `geometry` parameter is of type `WindowGeometry` and is used to specify
+            the size and position of the window.
+        path : Path
+            The `path` parameter is a string that represents the directory path.
+            It specifies the location where the file entries will be displayed.
+            By default, it is set to the root directory ("/").
+
+        """
         super().__init__(geometry)
         self.error: Optional[str] = None
         self.path = path
@@ -20,6 +44,15 @@ class FolderWindow(DefaultWindow):
         self._update_window()
 
     def update_path(self, path: Path):
+        """The function updates the path attribute, updates the entries based on
+        the new path, and updates the window.
+
+        Parameters
+        ----------
+        path : Path
+            The `path` parameter is a `Path` object that represents the new path to be updated.
+
+        """
         self.path = path
         self._update_entries(self.path)
         self._update_window()

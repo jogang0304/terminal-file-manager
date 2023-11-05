@@ -1,11 +1,20 @@
+"""
+The `FileWindow` class represents a window that displays the contents of a file,
+with error handling for bad encoding or permission denied.
+"""
 import curses
 from typing import List
-from ..Entry import Entry
-from ..Types import WindowGeometry
-from .DefaultWindow import DefaultWindow
+from src.entry import Entry
+from src.custom_types import WindowGeometry
+from src.Windows.default_window import DefaultWindow
 
 
 class FileWindow(DefaultWindow):
+    """
+    The `FileWindow` class represents a window that displays the contents of a file,
+    with error handling for bad encoding or permission denied.
+    """
+
     def __init__(self, geometry: WindowGeometry, file: Entry) -> None:
         super().__init__(geometry)
         self.file = file
@@ -18,13 +27,13 @@ class FileWindow(DefaultWindow):
             with open(self.file.path, "r") as file:
                 for _ in range(0, self.geometry.height - 2):
                     text.append(file.readline()[0 : self.geometry.width - 2])
-            return text
         except UnicodeDecodeError:
             self.error = "Bad encoding"
         except PermissionError:
             self.error = "Permission denied"
         except:
             pass
+        return text
 
     def _update_window(self):
         self.window.clear()

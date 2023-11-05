@@ -1,6 +1,8 @@
 import curses
 import os
 from pathlib import Path
+import platform
+import tempfile
 from .Entry import Entry, EntryType
 
 from .Windows.CreationWindow import CreateType, CreationWindow
@@ -200,7 +202,11 @@ class MainScreen(DefaultWindow):
 
     def delete(self):
         if self.selected_entry:
-            self.files_processor.delete(self.selected_entry)
+            system = platform.system()
+            trash_folder = Path(tempfile.gettempdir()).joinpath("python_tfm_folder/")
+            if not trash_folder.exists():
+                trash_folder.mkdir()
+            self.files_processor.delete(self.selected_entry, trash_folder)
             self.update()
 
     def undo(self):

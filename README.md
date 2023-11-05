@@ -6,9 +6,9 @@ A terminal file manager written in python. It uses curses module for graphics an
 
 ## Installation
 
-1. Clone the repository and go to downloaded folder
-2. install all requirements from requirements.txt (```pip install -r requrements.txt```)
-3. run ``` python start.pyy```
+1. Clone the repository and go to the downloaded folder
+2. Install all requirements from requirements.txt (```pip install -r requirements.txt```)
+3. Run ``` python start.py```
 
 ## Usage
 
@@ -20,6 +20,14 @@ Paste it with 'p'.
 
 Cut a file or a directory with 'c'.
 
-You can undo paste operation with 'u'.
+Delete a file or a directory with 'd'. The file is moved to trash or to temporary folder. If moved to temporary folder, it can be restored.
 
-Delete a file or a directory with 'd'. The file is moved to trash. Can't be undone yet.
+Create new folder with 'f'.
+
+Create new file with 'n'.
+
+You can undo operations with 'u'.
+
+Open a file with 'o'.
+
+Exit with "q".

@@ -54,8 +54,15 @@ class Action:
                 return f"Removed {self.destination.name}"
             except:
                 return f"Error: can't remove {self.destination.name}"
-        elif self.type == ActionType.DELETE and self.source:
-            pass
+        elif self.type == ActionType.DELETE and self.source and self.destination:
+            try:
+                if self.destination.is_dir():
+                    shutil.copytree(self.destination, self.source)
+                else:
+                    shutil.copy2(self.destination, self.source)
+                return f"Restored {self.source.name}"
+            except:
+                return f"Error: can't restore {self.source.name}"
         elif self.type == ActionType.CREATE and self.source:
             try:
                 send2trash(self.source)
@@ -164,7 +171,7 @@ class FilesProcessor:
                 )
             )
 
-    def delete(self, file: Entry):
+    def delete(self, file: Entry, trash_folder: Optional[Path] = None):
         """The `delete` function deletes a file and updates the message and actions list accordingly.
 
         Parameters
@@ -174,9 +181,21 @@ class FilesProcessor:
         that you want to delete.
 
         """
-        send2trash(file.path)
+        if not trash_folder:
+            send2trash(file.path)
+            self.actions.append(Action(ActionType.DELETE, file.path))
+        else:
+            pending_file_destination = self._get_pending_file_destination(
+                trash_folder, file.name
+            )
+            if file.path.is_dir():
+                destination = shutil.copytree(file.path, pending_file_destination)
+            else:
+                destination = shutil.copy2(file.path, pending_file_destination)
+            self.actions.append(Action(ActionType.DELETE, file.path, destination))
+            shutil.rmtree(file.path)
+
         self.message = f"Deleted {file.name}"
-        self.actions.append(Action(ActionType.DELETE, file.path))
 
     def create(self, file: Entry):
         if file.type == EntryType.FOLDER:

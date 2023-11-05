@@ -56,3 +56,9 @@ def main(stdscr):
             main_screen.undo()
         elif key == "d":
             main_screen.delete()
+        elif key == "f":
+            main_screen.create_folder()
+        elif key == "n":
+            main_screen.create_file()
+        elif key == "o":
+            main_screen.open()

@@ -1,6 +1,9 @@
 import curses
 import os
 from pathlib import Path
+from .Entry import Entry, EntryType
+
+from .Windows.CreationWindow import CreateType, CreationWindow
 
 from .FilesActions.Processor import FilesProcessor
 from .InfoBars.BottomInfoBar import BottomInfoBar
@@ -126,29 +129,34 @@ class MainScreen(DefaultWindow):
 
     def update_preview_window(self):
         """The function updates the preview window, entry info, and output in the bottom info bar."""
-        self.selected_entry = self.main_folder_window.entries[
-            self.main_folder_window.selected_entry_index
-        ]
+        if len(self.main_folder_window.entries) > 0:
+            self.selected_entry = self.main_folder_window.entries[
+                self.main_folder_window.selected_entry_index
+            ]
+        else:
+            self.selected_entry = None
         self.preview_window.update(self.selected_entry)
         self.bottom_info_bar.update_entry_info(self.selected_entry)
         self.bottom_info_bar.update_output(self.files_processor.message)
 
     def update(self):
         """The function updates the path in the main folder window, previous folder window, and preview window."""
+        while not self.path.exists():
+            self.path = self.path.parent
         self.main_folder_window.update_path(self.path)
         self.prev_folder_window.update_path(self.path.parent.absolute())
         self.update_preview_window()
 
     def go_to_path(self, new_path: Path):
-        '''The function updates various windows and variables with a new path, and handles exceptions by
+        """The function updates various windows and variables with a new path, and handles exceptions by
         reverting to the previous path.
-        
+
         Parameters
         ----------
         new_path : Path
             The `new_path` parameter is a `Path` object that represents the new path to navigate to.
-        
-        '''
+
+        """
         try:
             self.main_folder_window.update_path(new_path)
             self.prev_folder_window.update_path(new_path.parent.absolute())
@@ -165,7 +173,7 @@ class MainScreen(DefaultWindow):
         self.go_to_path(self.prev_folder)
 
     def go_to_selected_folder(self):
-        if self.selected_entry.path.is_dir():
+        if self.selected_entry and self.selected_entry.path.is_dir():
             self.go_to_path(self.selected_entry.path)
 
     def select_down(self):
@@ -177,21 +185,45 @@ class MainScreen(DefaultWindow):
         self.update_preview_window()
 
     def copy(self):
-        self.files_processor.copy(self.selected_entry)
-        self.update()
+        if self.selected_entry:
+            self.files_processor.copy(self.selected_entry)
+            self.update()
 
     def cut(self):
-        self.files_processor.cut(self.selected_entry)
-        self.update()
+        if self.selected_entry:
+            self.files_processor.cut(self.selected_entry)
+            self.update()
 
     def paste(self):
         self.files_processor.paste(self.path)
         self.update()
 
     def delete(self):
-        self.files_processor.delete(self.selected_entry)
-        self.update()
+        if self.selected_entry:
+            self.files_processor.delete(self.selected_entry)
+            self.update()
 
     def undo(self):
         self.files_processor.undo()
         self.update()
+
+    def _create(self, what_to_create: EntryType):
+        create_type = (
+            CreateType.FOLDER if what_to_create == EntryType.FOLDER else CreateType.FILE
+        )
+        creation_window = CreationWindow(self.geometry, create_type)
+        name = creation_window.filename
+        to_create = Entry(Path(self.path).joinpath(f"{name}/"), what_to_create)
+        self.files_processor.create(to_create)
+        del creation_window
+        self.update()
+
+    def create_folder(self):
+        self._create(EntryType.FOLDER)
+
+    def create_file(self):
+        self._create(EntryType.TEXT)
+
+    def open(self):
+        if self.selected_entry:
+            self.files_processor.open(self.selected_entry)

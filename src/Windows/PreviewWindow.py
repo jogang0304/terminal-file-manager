@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Optional
 
 from .FileWindow import FileWindow
@@ -19,6 +20,7 @@ class PreviewWindow(DefaultWindow):
 
     def update(self, entry: Optional[Entry]):
         if not entry:
+            self.content = DefaultWindow(self.geometry)
             return
         if entry.type == EntryType.FOLDER:
             self.content = FolderWindow(self.geometry, entry.path)

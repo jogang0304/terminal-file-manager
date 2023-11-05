@@ -13,7 +13,7 @@ class EntryType(IntEnum):
 
 # The `Entry` class initializes an object with properties such as path, name, type, and size based on the given path.
 class Entry:
-    def __init__(self, path: Path) -> None:
+    def __init__(self, path: Path, entry_type: EntryType = EntryType.TEXT) -> None:
         """The function initializes an object with properties such as path, name, type, and size based on
         the given path.
 
@@ -25,7 +25,7 @@ class Entry:
         """
         self.path = path
         self.name = path.name
-        self.type = EntryType.TEXT
+        self.type = entry_type
         if path.is_dir():
             self.type = EntryType.FOLDER
         elif os.access(path, os.X_OK):

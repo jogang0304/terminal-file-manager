@@ -1,12 +1,14 @@
 from enum import IntEnum
 from optparse import Option
 import os
+import platform
 import shutil
 from pathlib import Path
+import subprocess
 from typing import List, Optional
 from send2trash import send2trash
 
-from ..Entry import Entry
+from ..Entry import Entry, EntryType
 
 
 class ActionType(IntEnum):
@@ -14,6 +16,7 @@ class ActionType(IntEnum):
     PASTE = 2
     DELETE = 3
     CUT = 4
+    CREATE = 5
 
 
 class Action:
@@ -48,12 +51,18 @@ class Action:
                         shutil.copy2(self.destination, self.source)
 
                 send2trash(self.destination)
-                return f"Removed {self.destination}"
+                return f"Removed {self.destination.name}"
             except:
-                return f"Error: can't remove {self.destination}"
-        if self.type == ActionType.DELETE and self.source:
+                return f"Error: can't remove {self.destination.name}"
+        elif self.type == ActionType.DELETE and self.source:
             pass
-        return "Success"
+        elif self.type == ActionType.CREATE and self.source:
+            try:
+                send2trash(self.source)
+                return f"Removed {self.source.name}"
+            except:
+                return f"Error: can't remove {self.source.name}"
+        return "Nothing to undo"
 
 
 class FilesProcessor:
@@ -169,6 +178,13 @@ class FilesProcessor:
         self.message = f"Deleted {file.name}"
         self.actions.append(Action(ActionType.DELETE, file.path))
 
+    def create(self, file: Entry):
+        if file.type == EntryType.FOLDER:
+            file.path.mkdir()
+        else:
+            file.path.touch()
+        self.actions.append(Action(ActionType.CREATE, file.path))
+
     def undo(self):
         """The `undo` function undoes the last action performed by removing it from the list of actions and
         updating the message.
@@ -177,3 +193,22 @@ class FilesProcessor:
         if len(self.actions) > 0:
             self.message = self.actions[-1].undo()
             self.actions.pop()
+
+    def open(self, file: Entry):
+        if file.type == EntryType.FOLDER:
+            return
+        try:
+            system = platform.system()
+            if system == "Windows":
+                os.startfile(file.path)  # type: ignore
+            else:
+                opener = "xdg-open"
+                if system == "Darwin":
+                    opener = "open"
+                subprocess.call(
+                    (opener, file.path),
+                    stderr=subprocess.DEVNULL,
+                    stdout=subprocess.DEVNULL,
+                )
+        except:
+            self.message = f"Error opening {file.name}"

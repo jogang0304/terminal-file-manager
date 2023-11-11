@@ -23,29 +23,24 @@ class InfoBar(DefaultWindow):
     def _update_info(self, color: int = EntryType.OTHER):
         self.window.clear()
         self.draw_border()
-        free_space = (
+        free_space = max(
             self.geometry.width
             - len(self.left_info)
             - len(self.right_info)
-            - len(self.mid_info)
+            - len(self.mid_info),
+            0,
         )
         gap = free_space // 2
-        self.window.addstr(
-            0,
-            0,
-            self.left_info,
-            curses.color_pair(color),
+        string_to_show = (
+            self.left_info
+            + " " * gap
+            + self.mid_info
+            + " " * (gap - 1)
+            + self.right_info
         )
-        self.window.addstr(
-            0,
-            len(self.left_info) + gap,
-            self.mid_info,
-            curses.color_pair(color),
-        )
-        self.window.addstr(
-            0,
-            len(self.left_info) + len(self.mid_info) + 2 * gap - 1,
-            self.right_info,
-            curses.color_pair(color),
-        )
+        if len(string_to_show) >= self.geometry.width:
+            string_to_show = (
+                "..." + string_to_show[len(string_to_show) - self.geometry.width + 4 :]
+            )
+        self.window.addstr(string_to_show)
         self.window.refresh()

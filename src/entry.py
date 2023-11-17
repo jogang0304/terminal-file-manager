@@ -5,6 +5,7 @@ path, name, type, and size int bytes.
 from enum import IntEnum
 import os
 from pathlib import Path
+import platform
 
 
 class EntryType(IntEnum):
@@ -42,9 +43,22 @@ class Entry:
         self.type = entry_type
         if path.is_dir():
             self.type = EntryType.FOLDER
-        elif os.access(path, os.X_OK):
+        elif self.is_executable():
             self.type = EntryType.EXECUTABLE
         try:
             self.size = os.path.getsize(path)
         except os.error:
             self.size = 0
+            
+    
+    def is_executable(self) -> bool:
+        if not self.path.is_file():
+            return False
+        answer = False
+        if platform.system() == "Windows":
+            if self.path.suffix == ".exe":
+                answer = True
+        else:
+            if os.access(self.path, os.X_OK):
+                answer = True
+        return answer

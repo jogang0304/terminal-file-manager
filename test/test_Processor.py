@@ -1,6 +1,7 @@
+from multiprocessing import process
 from platform import processor
 import unittest
-from src.entry import Entry
+from src.entry import Entry, EntryType
 from src.FilesActions.file_processor import FilesProcessor
 import os
 import shutil
@@ -94,6 +95,31 @@ class TestFilesActions(unittest.TestCase):
         ls = os.listdir(wd)
         self.assertEqual(sorted(ls), sorted(expected_ls))
 
+        self.delete_environment()
+    
+    def test_create(self):
+        wd = self.prepare_environment()
+        processor = FilesProcessor()
+        
+        processor.create(Entry(wd.joinpath("123"), EntryType.TEXT))
+        processor.create(Entry(wd.joinpath("456"), EntryType.FOLDER))
+        expected_ls = [self.testfile_name, self.testfolder_name, "123", "456"]
+        ls = os.listdir(wd)
+        self.assertEqual(sorted(ls), sorted(expected_ls))
+        
+        self.assertEqual(wd.joinpath("123").is_file(), True)
+        self.assertEqual(wd.joinpath("456").is_dir(), True)
+
+        processor.undo()
+        expected_ls = [self.testfile_name, self.testfolder_name, "123"]
+        ls = os.listdir(wd)
+        self.assertEqual(sorted(ls), sorted(expected_ls))
+        
+        processor.undo()
+        expected_ls = [self.testfile_name, self.testfolder_name]
+        ls = os.listdir(wd)
+        self.assertEqual(sorted(ls), sorted(expected_ls))
+        
         self.delete_environment()
 
 

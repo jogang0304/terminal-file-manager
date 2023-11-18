@@ -14,19 +14,19 @@ A terminal file manager written in python. It uses curses module for graphics an
 
 Navigate with arrows or hjkl.
 
-Copy a file or a directory with 'y'.
+Copy a file or a directory with 'y'. (tested)
 
-Paste it with 'p'.
+Paste it with 'p'. (tested)
 
-Cut a file or a directory with 'c'.
+Cut a file or a directory with 'c'. (tested)
 
-Delete a file or a directory with 'd'. The file is moved to trash or to temporary folder. If moved to temporary folder, it can be restored.
+Delete a file or a directory with 'd'. The file is moved to trash or to temporary folder. If moved to temporary folder, it can be restored. (tested)
 
-Create new folder with 'f'.
+Create new folder with 'f'. (tested)
 
-Create new file with 'n'.
+Create new file with 'n'. (tested)
 
-You can undo operations with 'u'.
+You can undo operations with 'u'. (tested)
 
 Open a file with 'o'.
 
